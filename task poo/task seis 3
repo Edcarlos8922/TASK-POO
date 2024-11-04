@@ -1,0 +1,31 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Pedido extends BaseEntity {
+    private List<Produto> produtos = new ArrayList<>();
+    
+    public Pedido(Long id, String status) {
+        super(id, status);
+    }
+
+    public void addProduto(Produto produto) {
+        produtos.add(produto);
+    }
+
+    public void removeProduto(Produto produto) {
+        produtos.remove(produto);
+    }
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("Pedido ID: " + getId() + ", Status: " + getStatus());
+        System.out.println("Produtos do Pedido:");
+        for (Produto produto : produtos) {
+            produto.displayInfo();
+        }
+    }
+}
