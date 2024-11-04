@@ -1,0 +1,46 @@
+import java.util.Objects;
+
+public class Produto extends BaseEntity {
+    private String nome;
+    private double preco;
+
+    public Produto(Long id, String status, String nome, double preco) {
+        super(id, status);
+        this.nome = nome;
+        this.preco = preco;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("Produto ID: " + getId() + ", Nome: " + nome + ", Preço: " + preco + ", Status: " + getStatus());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Produto produto = (Produto) o;
+        return Objects.equals(id, produto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+}
