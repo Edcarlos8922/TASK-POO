@@ -1,0 +1,30 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class Produto {
+    private String nome;
+    private double preco;
+    private List<Adicional> adicionais;
+
+    public Produto(String nome, double preco) {
+        this.nome = nome;
+        this.preco = preco;
+        this.adicionais = new ArrayList<>();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public List<Adicional> getAdicionais() {
+        return adicionais;
+    }
+
+    public void addAdicional(Adicional adicional) {
+        this.adicionais.add(adicional);
+    }
+}
