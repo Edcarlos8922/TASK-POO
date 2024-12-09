@@ -1,0 +1,136 @@
+import java.util.Scanner;
+
+public class MenuPrincipal {
+    public static void main(String[] args) {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            Carrinho carrinho = new Carrinho();
+            List<Restaurante> restaurantes = inicializarDados();
+
+            while (true) {
+                System.out.println("\n--- Menu Principal ---");
+                System.out.println("1. Listar Restaurantes");
+                System.out.println("2. Ver Carrinho");
+                System.out.println("3. Sair");
+
+                int opcao = scanner.nextInt();
+                scanner.nextLine(); // Consumir o '\n'
+
+                switch (opcao) {
+                    case 1 -> listarRestaurantes(scanner, restaurantes, carrinho);
+                    case 2 -> exibirCarrinho(carrinho);
+                    case 3 -> {
+                        System.out.println("Obrigado por usar nosso sistema!");
+                        return;
+                    }
+                    default -> System.out.println("Opção inválida, tente novamente.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro: " + e.getMessage());
+        }
+    }
+
+    private static List<Restaurante> inicializarDados() {
+        Restaurante r1 = new Restaurante("Pizza da Casa");
+        Restaurante r2 = new Restaurante("Lanche Rápido");
+
+        Produto p1 = new Produto("Pizza Margherita", 30.0);
+        p1.addAdicional(new Adicional("Extra Queijo", 5.0));
+        p1.addAdicional(new Adicional("Borda Recheada", 7.0));
+
+        Produto p2 = new Produto("Pizza Calabresa", 35.0);
+        p2.addAdicional(new Adicional("Cebola", 3.0));
+        p2.addAdicional(new Adicional("Catupiry", 6.0));
+
+        r1.addProduto(p1);
+        r1.addProduto(p2);
+
+        Produto l1 = new Produto("Hamburguer", 20.0);
+        l1.addAdicional(new Adicional("Bacon", 4.0));
+        l1.addAdicional(new Adicional("Cheddar", 3.0));
+
+        r2.addProduto(l1);
+
+        return List.of(r1, r2);
+    }
+
+    private static void listarRestaurantes(Scanner scanner, List<Restaurante> restaurantes, Carrinho carrinho) {
+        System.out.println("\n--- Restaurantes Disponíveis ---");
+        for (int i = 0; i < restaurantes.size(); i++) {
+            System.out.println((i + 1) + ". " + restaurantes.get(i).getNome());
+        }
+        System.out.println("Escolha um restaurante:");
+        int escolhaRestaurante = scanner.nextInt() - 1;
+        scanner.nextLine();
+
+        if (escolhaRestaurante >= 0 && escolhaRestaurante < restaurantes.size()) {
+            Restaurante restauranteSelecionado = restaurantes.get(escolhaRestaurante);
+            listarProdutos(scanner, restauranteSelecionado, carrinho);
+        } else {
+            System.out.println("Restaurante inválido!");
+        }
+    }
+
+    private static void listarProdutos(Scanner scanner, Restaurante restaurante, Carrinho carrinho) {
+        System.out.println("\n--- Produtos do Restaurante " + restaurante.getNome() + " ---");
+        List<Produto> produtos = restaurante.getProdutos();
+        for (int i = 0; i < produtos.size(); i++) {
+            System.out.println((i + 1) + ". " + produtos.get(i).getNome() + " - R$" + produtos.get(i).getPreco());
+        }
+        System.out.println("Escolha um produto:");
+        int escolhaProduto = scanner.nextInt() - 1;
+        scanner.nextLine();
+
+        if (escolhaProduto >= 0 && escolhaProduto < produtos.size()) {
+            Produto produtoSelecionado = produtos.get(escolhaProduto);
+            selecionarAdicionais(scanner, produtoSelecionado, carrinho);
+        } else {
+            System.out.println("Produto inválido!");
+        }
+    }
+
+    private static void selecionarAdicionais(Scanner scanner, Produto produto, Carrinho carrinho) {
+        System.out.println("\n--- Adicionais para " + produto.getNome() + " ---");
+        ItemCarrinho itemCarrinho = new ItemCarrinho(produto);
+        List<Adicional> adicionais = produto.getAdicionais();
+
+        for (int i = 0; i < adicionais.size(); i++) {
+            System.out.println((i + 1) + ". " + adicionais.get(i).getNome() + " - R$" + adicionais.get(i).getPreco());
+        }
+        System.out.println("Digite os números dos adicionais separados por espaço (ou 0 para nenhum):");
+        String[] escolhas = scanner.nextLine().split(" ");
+
+        for (String escolha : escolhas) {
+            try {
+                int index = Integer.parseInt(escolha) - 1;
+                if (index >= 0 && index < adicionais.size()) {
+                    itemCarrinho.addAdicional(adicionais.get(index));
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Escolha inválida ignorada.");
+            }
+        }
+
+        carrinho.addItem(itemCarrinho);
+        System.out.println(produto.getNome() + " adicionado ao carrinho.");
+    }
+
+    private static void exibirCarrinho(Carrinho carrinho) {
+        System.out.println("\n--- Seu Carrinho ---");
+        List<ItemCarrinho> itens = carrinho.getItens();
+
+        if (itens.isEmpty()) {
+            System.out.println("Carrinho vazio!");
+        } else {
+            for (ItemCarrinho item : itens) {
+                System.out.println(item.getProduto().getNome() + " - R$" + item.getProduto().getPreco());
+                for (Adicional adicional : item.getAdicionais()) {
+                    System.out.println("  + " + adicional.getNome() + " - R$" + adicional.getPreco());
+                }
+                System.out.println("  Total do item: R$" + item.calcularPrecoTotal());
+            }
+            System.out.println("Total do carrinho: R$" + carrinho.calcularPrecoTotal());
+        }
+    }
+}
