@@ -1,0 +1,32 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class ItemCarrinho {
+    private Produto produto;
+    private List<Adicional> adicionais;
+
+    public ItemCarrinho(Produto produto) {
+        this.produto = produto;
+        this.adicionais = new ArrayList<>();
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public List<Adicional> getAdicionais() {
+        return adicionais;
+    }
+
+    public void addAdicional(Adicional adicional) {
+        this.adicionais.add(adicional);
+    }
+
+    public double calcularPrecoTotal() {
+        double total = produto.getPreco();
+        for (Adicional adicional : adicionais) {
+            total += adicional.getPreco();
+        }
+        return total;
+    }
+}
